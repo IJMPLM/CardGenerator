@@ -487,8 +487,30 @@
     });
     layer.add(innerRect);
 
+    // Store configuration for initial load
+    window.currentConfiguration = {
+      cardTitle: 'Floydilayo',
+      hpValue: '2000',
+      damageValue: '200',
+      critRateValue: 'x1.8',
+      skillNames: [
+        'Delulu Langka',
+        'Langka Punch',
+        'Langka Bonk',
+        'Langkaquake',
+        'Zucc Langka',
+        'Gyatt Langka',
+        'Self-Care Langka'
+      ],
+      description: "Floydilayo, with his spiky Langka hair, is always ready for a stare! He's got the zesty vibe and the Langka pride. Don't let his chill demeanor fool you, he will always make your mood better, or worst if he is not well-fed. But feed him once he will do the Zesty Leono pose for the camera. He'll strike a pose with his Langka nose, he always grows and shows how it goes!",
+      borderColor: 'GREEN',
+      overlay: 'holographic',
+      imageSrc: 'Image_Floyd.jpeg'
+    };
+    
+    // Load initial image from configuration
     const imageObj = new Image();
-    imageObj.src = 'Image_Floyd.jpeg';
+    imageObj.src = window.currentConfiguration.imageSrc;
     imageObj.onload = () => {
       // Create a clip region for the image (same as innerRect dimensions)
       const clipGroup = new Konva.Group({
@@ -841,23 +863,32 @@
       }
       
       // Update image if provided
-      if (mergedConfig.imageSrc) {
+      if (mergedConfig.imageSrc && mergedConfig.imageSrc !== window.currentImageSrc) {
         const newImage = new Image();
         newImage.src = mergedConfig.imageSrc;
         window.currentImageSrc = mergedConfig.imageSrc;
         
         newImage.onload = () => {
-          // Find the image within the clip group
-          const clipGroup = layer.findOne(node => {
-            return node.className === 'Group' && node.hasChildren();
-          });
+          console.log("Loading new image:", mergedConfig.imageSrc);
+          
+          // Find the image within the clip group - first find all groups
+          const groups = layer.find('Group');
+          let clipGroup = null;
+          
+          // Find the clip group that has the clip function - this is our image container
+          for (let i = 0; i < groups.length; i++) {
+            if (groups[i].clipFunc) {
+              clipGroup = groups[i];
+              break;
+            }
+          }
           
           if (clipGroup) {
-            const existingImage = clipGroup.findOne(node => {
-              return node.className === 'Image';
-            });
-            
-            if (existingImage) {
+            // Find the image inside the clip group
+            const images = clipGroup.find('Image');
+            if (images.length > 0) {
+              const existingImage = images[0];
+              
               // Scale to fit height
               const scale = window.clipGroupHeight / newImage.height;
               const drawHeight = window.clipGroupHeight;
@@ -870,7 +901,12 @@
               existingImage.x(imgX);
               
               layer.draw();
+              console.log("Image updated successfully");
+            } else {
+              console.error("No image found in clip group");
             }
+          } else {
+            console.error("No clip group found");
           }
         };
       }
@@ -927,8 +963,22 @@
       const configText = document.getElementById('card-config').value;
       try {
         const config = JSON.parse(configText);
+        
+        // Set this flag for debugging image updates
+        window.updatingFromConfig = true;
+        
+        // Apply the configuration 
         configureCard(config);
+        
+        // Store the current configuration for future reference
+        window.currentConfiguration = config;
+        
+        // Update the textarea with the applied config (to keep it in sync)
+        document.getElementById('card-config').value = JSON.stringify(config, null, 2);
+        
+        console.log("Configuration applied successfully:", config);
       } catch (error) {
+        console.error("Error applying configuration:", error);
         alert('Invalid JSON format. Please check your input.');
       }
     });
