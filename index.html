@@ -46,23 +46,23 @@
     <label>Card Configuration (JSON format):</label><br>
     <textarea id="card-config" rows="10" cols="80" style="margin: 5px 0;">
 {
-  "cardTitle": "Floyd Jackknife",
+  "cardTitle": "John Leono",
   "hpValue": "2400",
   "damageValue": "220", 
   "critRateValue": "x1.5",
   "skillNames": [
-    "Jackknife Jab",
-    "Langka Fury",
-    "Spiky Defense",
-    "Tropical Storm",
-    "Sweet Revenge",
-    "Zesty Combo",
-    "Final Flourish"
+    "Leono Roar",
+    "Zesty Pounce",
+    "King's Slash",
+    "Tropical Fury",
+    "Mane Attack",
+    "Langka Pride",
+    "Royal Zest"
   ],
-  "description": "Floyd Jackknife, the toughest Langka in town! With his spiky exterior and sweet fighting style, he's both intimidating and irresistible. His Tropical Storm move can wipe out multiple opponents, while his Sweet Revenge punishes anyone who dares to hurt his friends.",
+  "description": "John Leono, the king of the Langka jungle! With his majestic mane and powerful presence, he commands respect from friends and foes alike. His Tropical Fury sends opponents running, while his Langka Pride boosts the morale of his allies. A true leader with both strength and wisdom.",
   "borderColor": "GREEN",
   "overlay": "holographic",
-  "imageSrc": "Image_Floyd.jpeg"
+  "imageSrc": "Image_JohnLeono.jpeg"
 }
     </textarea><br>
     <button id="apply-config">Apply Configuration</button>
@@ -489,28 +489,40 @@
 
     // Store configuration for initial load
     window.currentConfiguration = {
-      cardTitle: 'Floydilayo',
-      hpValue: '2000',
-      damageValue: '200',
-      critRateValue: 'x1.8',
+      cardTitle: 'John Leono',
+      hpValue: '2400',
+      damageValue: '220',
+      critRateValue: 'x1.5',
       skillNames: [
-        'Delulu Langka',
-        'Langka Punch',
-        'Langka Bonk',
-        'Langkaquake',
-        'Zucc Langka',
-        'Gyatt Langka',
-        'Self-Care Langka'
+        'Leono Roar',
+        'Zesty Pounce',
+        'King\'s Slash',
+        'Tropical Fury',
+        'Mane Attack',
+        'Langka Pride',
+        'Royal Zest'
       ],
-      description: "Floydilayo, with his spiky Langka hair, is always ready for a stare! He's got the zesty vibe and the Langka pride. Don't let his chill demeanor fool you, he will always make your mood better, or worst if he is not well-fed. But feed him once he will do the Zesty Leono pose for the camera. He'll strike a pose with his Langka nose, he always grows and shows how it goes!",
+      description: "John Leono, the king of the Langka jungle! With his majestic mane and powerful presence, he commands respect from friends and foes alike. His Tropical Fury sends opponents running, while his Langka Pride boosts the morale of his allies. A true leader with both strength and wisdom.",
       borderColor: 'GREEN',
       overlay: 'holographic',
-      imageSrc: 'Image_Floyd.jpeg'
+      imageSrc: 'Image_JohnLeono.jpeg'
     };
+    
+    // Set initial values in configuration textarea
+    document.getElementById('card-config').value = JSON.stringify(window.currentConfiguration, null, 2);
+    
+    // Track loaded state to prevent timing issues
+    window.cardElementsLoaded = false;
     
     // Load initial image from configuration
     const imageObj = new Image();
+    imageObj.onerror = () => {
+      console.error("Failed to load image:", window.currentConfiguration.imageSrc);
+      alert(`Failed to load image: ${window.currentConfiguration.imageSrc}. Make sure the file exists.`);
+    };
     imageObj.src = window.currentConfiguration.imageSrc;
+    window.currentImageSrc = window.currentConfiguration.imageSrc;
+
     imageObj.onload = () => {
       // Create a clip region for the image (same as innerRect dimensions)
       const clipGroup = new Konva.Group({
@@ -699,7 +711,7 @@
         fontSize: 7 * scaleFactor,
         fontFamily: 'CardDescFont',
         fill: 'white',
-        width: cardWidth - (30 * scaleFactor),
+        width: cardWidth - (35 * scaleFactor),
         align: 'left',
         shadowColor: 'black',
         shadowBlur: 1 * scaleFactor,
@@ -711,6 +723,12 @@
       
       // Apply the initial overlay effect after everything is loaded
       setOverlayEffect(currentOverlay);
+      
+      // Mark card elements as loaded
+      window.cardElementsLoaded = true;
+      
+      // Apply the initial configuration from the textarea
+      document.getElementById('apply-config').click();
     };
 
     // Helper function to draw a rounded rectangle with a given radius
@@ -914,58 +932,18 @@
       // Redraw the layer
       layer.draw();
     }
-
-    // Example usage of configureCard function - uncomment to test
-    /*
-    // Change to Jieco card
-    configureCard({
-      cardTitle: 'Jieco the Third',
-      hpValue: '1800',
-      damageValue: '150',
-      critRateValue: 'x2.1',
-      skillNames: [
-        'Jieco Jab',
-        'Third Degree',
-        'Banana Split',
-        'Potassium Punch',
-        'Peel Out'
-      ],
-      description: "Jieco the Third is the crowned prince of the Banana Republic. His curved form and slippery tactics make him a formidable opponent. Watch out for his Potassium Punch - it's a real knockout! When he's not fighting, you can find him hanging with his bunch.",
-      borderColor: 'BLUE',
-      overlay: 'glitter',
-      imageSrc: 'Image_Jieco.jpeg'
-    });
-    */
-    
-    // Change to John Michael card
-    configureCard({
-      cardTitle: 'John Michelob',
-      hpValue: '2200',
-      damageValue: '180',
-      critRateValue: 'x1.7',
-      skillNames: [
-        'Delulu Kalabasa',
-        'Kalabasa Punch',
-        'Kalabasa Bonk',
-        'Kalabasaquake',
-        'Self-Care Kalabasa',
-        'Gyatt Kalabasa',
-        'Zucc Kalabasa'
-      ],
-      description: "John Michelob Kalabasa, a veggie with a head full of sass! Don't let his goofy look fool ya, he's got moves like a squas-sa! He's chilling in the mist, with a fist full of grit. John Michelob Kalabasa, ready to attack, with a SpAtk that will push you back! He's got the style, he got the gile!",
-      borderColor: 'RED',
-      overlay: 'foil',
-      imageSrc: 'Image_JohnMichael.jpeg'
-    });
-
+  
     // Handle card configuration input
     document.getElementById('apply-config').addEventListener('click', () => {
       const configText = document.getElementById('card-config').value;
       try {
         const config = JSON.parse(configText);
         
-        // Set this flag for debugging image updates
-        window.updatingFromConfig = true;
+        if (!window.cardElementsLoaded) {
+          console.log("Card elements not yet loaded, saving configuration for later application");
+          window.pendingConfiguration = config;
+          return;
+        }
         
         // Apply the configuration 
         configureCard(config);
