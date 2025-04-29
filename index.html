@@ -870,13 +870,13 @@
       
       // Update overlay
       if (mergedConfig.overlay) {
-        currentOverlay = mergedConfig.overlay;
-        setOverlayEffect(mergedConfig.overlay);
+        currentOverlay = mergedConfig.overlay.toLowerCase();
+        setOverlayEffect(mergedConfig.overlay.toLowerCase());
         
         // Update the dropdown to match
         const overlaySelect = document.getElementById('overlay-select');
         if (overlaySelect) {
-          overlaySelect.value = mergedConfig.overlay;
+          overlaySelect.value = mergedConfig.overlay.toLowerCase();
         }
       }
       
